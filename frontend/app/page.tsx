@@ -46,32 +46,6 @@ export default function Component() {
     }, 2000)
   }
 
-  const getRiskIcon = (riskLevel: string) => {
-    switch (riskLevel) {
-      case "safe":
-        return <CheckCircle className="w-4 h-4 text-green-500" />
-      case "moderate":
-        return <AlertTriangle className="w-4 h-4 text-yellow-500" />
-      case "high":
-        return <Shield className="w-4 h-4 text-red-500" />
-      default:
-        return <CheckCircle className="w-4 h-4 text-green-500" />
-    }
-  }
-
-  const getRiskColor = (riskLevel: string) => {
-    switch (riskLevel) {
-      case "safe":
-        return "bg-green-100 text-green-800 border-green-200"
-      case "moderate":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200"
-      case "high":
-        return "bg-red-100 text-red-800 border-red-200"
-      default:
-        return "bg-green-100 text-green-800 border-green-200"
-    }
-  }
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
