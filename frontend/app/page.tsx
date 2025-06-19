@@ -36,11 +36,10 @@ export default function Component() {
     const data = await response.json()
     console.log(data)
 
-    // Simulate API call with mock data
     setTimeout(() => {
-      const mockResults: ClassificationResult[] = data
+      const results: ClassificationResult[] = data
 
-      setResults(mockResults)
+      setResults(results)
       setHasResults(true)
       setIsLoading(false)
     }, 2000)
