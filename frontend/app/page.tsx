@@ -9,7 +9,7 @@ import { Progress } from "@/components/ui/progress"
 import { Shield, Zap, AlertTriangle, CheckCircle } from "lucide-react"
 
 interface ClassificationResult {
-  category: string
+  label: string
   score: number
 }
 
@@ -25,7 +25,7 @@ export default function Component() {
     setIsLoading(true)
 
     // call API endpoint http://127.0.0.1:8000
-    const response = await fetch("http://127.0.0.1:8000", {
+    const response = await fetch("http://127.0.0.1:8000/classify", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -38,44 +38,7 @@ export default function Component() {
 
     // Simulate API call with mock data
     setTimeout(() => {
-      const mockResults: ClassificationResult[] = [
-        {
-          category: "Sexual (S)",
-          score: 0.15,
-        },
-        {
-          category: "Hate (H)",
-          score: 0.08,
-        },
-        {
-          category: "Violence (V)",
-          score: 0.72,
-        },
-        {
-          category: "Harassment (HR)",
-          score: 0.03,
-        },
-        {
-          category: "Self-harm (SH)",
-          score: 0.45,
-        },
-        {
-          category: "Sexual/Minors (S3)",
-          score: 0.12,
-        },
-        {
-          category: "Hate/Threatening (H2)",
-          score: 0.05,
-        },
-        {
-          category: "Violence/Graphic (V2)",
-          score: 0.02,
-        },
-        {
-          category: "OK",
-          score: 0.01,
-        },
-      ]
+      const mockResults: ClassificationResult[] = data
 
       setResults(mockResults)
       setHasResults(true)
@@ -134,8 +97,7 @@ export default function Component() {
             AI Content <span className="text-blue-500">Classification</span>
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Analyze your text content for potential security risks, PII, and policy violations using our AI-powered
-            classification system.
+          This advanced AI model, powered by KoalaAI's Text Moderation system, provides real-time content analysis to help you understand and manage text safety. Simply input any text and receive detailed scores across multiple risk categories.
           </p>
         </div>
 
@@ -194,10 +156,8 @@ export default function Component() {
                     <div key={index} className="border rounded-lg p-4 space-y-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          {getRiskIcon(result.risk_level)}
-                          <span className="font-medium">{result.category}</span>
+                          <span className="font-medium">{result.label}</span>
                         </div>
-                        <Badge className={getRiskColor(result.risk_level)}>{result.risk_level}</Badge>
                       </div>
 
                       <div className="space-y-2">
@@ -206,11 +166,6 @@ export default function Component() {
                           <span className="font-medium">{(result.score * 100).toFixed(1)}%</span>
                         </div>
                         <Progress value={result.score * 100} className="h-2" />
-                      </div>
-
-                      <div className="flex justify-between text-xs text-gray-500">
-                        <span>Confidence: {result.confidence}</span>
-                        <span>Risk: {result.risk_level}</span>
                       </div>
                     </div>
                   ))}
