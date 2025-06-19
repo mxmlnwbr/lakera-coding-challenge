@@ -51,6 +51,9 @@ export default function Component() {
     if (!inputText.trim()) return
 
     setIsLoading(true)
+    // Clear load test results when classifying content
+    setLoadTestResults(null)
+    setShowLoadTest(false)
 
     const response = await fetch("http://127.0.0.1:8000/classify", {
       method: "POST",
