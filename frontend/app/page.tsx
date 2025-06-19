@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Shield, Zap } from "lucide-react"
+import Link from "next/link"
 
 interface ClassificationResult {
   label: string
@@ -81,7 +82,7 @@ export default function Component() {
             AI Content <span className="text-blue-500">Classification</span>
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          This advanced AI model, powered by KoalaAI's Text Moderation system, provides real-time content analysis to help you understand and manage text safety. Simply input any text and receive detailed scores across multiple risk categories.
+          This advanced AI model, powered by <Link href="https://huggingface.co/KoalaAI/Text-Moderation" target="_blank" className="underline text-blue-500">KoalaAI</Link>'s Text Moderation system, provides real-time content analysis to help you understand and manage text safety. Simply input any text and receive detailed scores across multiple risk categories.
           </p>
         </div>
 
