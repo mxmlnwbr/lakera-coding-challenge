@@ -4,13 +4,25 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { Shield, Zap, AlertTriangle, CheckCircle } from "lucide-react"
+import { Shield, Zap } from "lucide-react"
 
 interface ClassificationResult {
   label: string
   score: number
+}
+
+// Mapping from label codes to full category names
+const categoryMapping: Record<string, string> = {
+  "S": "sexual",
+  "H": "hate",
+  "V": "violence",
+  "HR": "harassment",
+  "SH": "self-harm",
+  "S3": "sexual/minors",
+  "H2": "hate/threatening",
+  "V2": "violence/graphic",
+  "OK": "OK"
 }
 
 export default function Component() {
@@ -129,7 +141,7 @@ export default function Component() {
                     <div key={index} className="border rounded-lg p-4 space-y-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <span className="font-medium">{result.label}</span>
+                          <span className="font-medium">{categoryMapping[result.label] || result.label} ({result.label})</span>
                         </div>
                       </div>
 
