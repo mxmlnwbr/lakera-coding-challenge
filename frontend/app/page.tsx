@@ -304,12 +304,6 @@ export default function Component() {
             </CardContent>
           </Card>
         </div>
-
-        {/* Trusted By Section */}
-        <div className="mt-16 text-center">
-          
-          
-        </div>
       </main>
     </div>
   )
