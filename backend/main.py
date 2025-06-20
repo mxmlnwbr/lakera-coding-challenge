@@ -1,9 +1,8 @@
 from transformers import pipeline
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import time
-import requests
 
 
 app = FastAPI()
