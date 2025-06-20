@@ -4,8 +4,6 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import time
 import requests
-import threading
-from concurrent.futures import ThreadPoolExecutor
 
 
 app = FastAPI()
@@ -28,7 +26,6 @@ async def ping():
     """Simple endpoint that returns immediately for latency testing"""
     return {"ping": "pong", "timestamp": time.time()}
 
-
 # Add an endpoint for text classification
 @app.post("/classify")
 async def classify(text: dict):
@@ -36,16 +33,8 @@ async def classify(text: dict):
     result = pipe(text.get("text", ""), top_k=None)
     return result
 
-# Simulate a ping response without making an actual HTTP request
-@app.get("/ping")
-async def ping():
-    """Simple endpoint that returns immediately for latency testing"""
-    return {"ping": "pong", "timestamp": time.time()}
-
 @app.get("/load-test")
 async def load_test():
-    """Simulate API latency test without making actual HTTP requests"""
-    
     num_requests = 100  # Number of requests to simulate
     
     latencies = []
@@ -55,15 +44,11 @@ async def load_test():
     print(f"Starting API latency test simulation with {num_requests} requests...")
     start_time = time.time()
     
-    # Simulate the latency of making requests to the ping endpoint
-    # This avoids the deadlock of the server making requests to itself
     for i in range(num_requests):
         request_start = time.time()
-        
-        # Simulate network latency (typically 1-5ms for localhost)
-        # This is a reasonable approximation of the actual latency
-        simulated_latency = 2 + (i % 3)  # Varies between 2-4ms
-        time.sleep(simulated_latency / 1000)  # Convert to seconds
+
+        result = await classify({"text": "Hello World"})
+        print(result)
         
         request_time = (time.time() - request_start) * 1000  # Convert to ms
         latencies.append(request_time)
@@ -75,9 +60,8 @@ async def load_test():
         avg_latency = sum(latencies) / len(latencies)
         min_latency = min(latencies)
         max_latency = max(latencies)
-        p95_latency = sorted(latencies)[int(0.95 * len(latencies))] if len(latencies) > 0 else 0
     else:
-        avg_latency = min_latency = max_latency = p95_latency = 0
+        avg_latency = min_latency = max_latency = 0
     
     result = {
         "total_requests": num_requests,
@@ -89,7 +73,6 @@ async def load_test():
         "avg_latency_ms": round(avg_latency, 2),
         "min_latency_ms": round(min_latency, 2),
         "max_latency_ms": round(max_latency, 2),
-        "p95_latency_ms": round(p95_latency, 2)
     }
     return result
 

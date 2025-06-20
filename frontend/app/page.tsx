@@ -23,7 +23,6 @@ interface LoadTestResult {
   avg_latency_ms: number
   min_latency_ms: number
   max_latency_ms: number
-  p95_latency_ms: number
 }
 
 // Mapping from label codes to full category names
@@ -46,6 +45,8 @@ export default function Component() {
   const [hasResults, setHasResults] = useState(false)
   const [loadTestResults, setLoadTestResults] = useState<LoadTestResult | null>(null)
   const [showLoadTest, setShowLoadTest] = useState(false)
+  const [loadingProgress, setLoadingProgress] = useState(0)
+  const [isLoadTesting, setIsLoadTesting] = useState(false)
 
   const handleClassify = async () => {
     if (!inputText.trim()) return
@@ -78,21 +79,48 @@ export default function Component() {
   const handleLoadTest = async () => {
     setIsLoading(true)
     setLoadTestResults(null)
+    setIsLoadTesting(true)
+    setLoadingProgress(0)
+    
+    // Start progress simulation
+    const progressInterval = setInterval(() => {
+      setLoadingProgress(prev => {
+        // Gradually increase progress up to 95% while waiting for response
+        // The remaining 5% will be filled when we get the actual response
+        if (prev < 95) {
+          return prev + 1;
+        }
+        return prev;
+      });
+    }, 490); // Update every 490ms
 
-    const response = await fetch("http://127.0.0.1:8000/load-test", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+    try {
+      const response = await fetch("http://127.0.0.1:8000/load-test", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
 
-    const data = await response.json()
-    console.log(data)
+      const data = await response.json()
+      console.log(data)
 
-    setLoadTestResults(data)
-    setShowLoadTest(true)
-    setHasResults(false)
-    setIsLoading(false)
+      // Complete the progress bar
+      setLoadingProgress(100);
+      setTimeout(() => {
+        setLoadTestResults(data)
+        setShowLoadTest(true)
+        setHasResults(false)
+        setIsLoading(false)
+        setIsLoadTesting(false)
+      }, 500); // Short delay to show 100% completion
+    } catch (error) {
+      console.error("Load test error:", error);
+      setIsLoading(false);
+      setIsLoadTesting(false);
+    } finally {
+      clearInterval(progressInterval);
+    }
   }
 
   return (
@@ -149,10 +177,10 @@ export default function Component() {
               </Button>
               <Button
                 onClick={handleLoadTest}
-                disabled={isLoading}
+                disabled={isLoading || isLoadTesting}
                 className="w-full bg-blue-600 hover:bg-blue-700 mt-2"
               >
-                Test API Latency
+                {isLoadTesting ? `Testing API (${loadingProgress}%)` : "Test API Latency"}
               </Button>
             </CardContent>
           </Card>
@@ -173,10 +201,18 @@ export default function Component() {
                 </div>
               )}
 
-              {isLoading && (
+              {isLoading && !isLoadTesting && (
                 <div className="text-center py-12">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
                   <p className="text-gray-600">Analyzing content...</p>
+                </div>
+              )}
+
+              {isLoadTesting && (
+                <div className="text-center py-8 space-y-4">
+                  <h3 className="font-medium text-gray-700">Running API Latency Test</h3>
+                  <Progress value={loadingProgress} className="h-2 w-full" />
+                  <p className="text-sm text-gray-500">{loadingProgress < 100 ? "Testing API performance..." : "Test complete!"}</p>
                 </div>
               )}
 
@@ -236,11 +272,6 @@ export default function Component() {
                       <div className="bg-white p-3 rounded shadow-sm">
                         <div className="text-sm text-gray-500">Max Latency</div>
                         <div className="font-medium">{loadTestResults.max_latency_ms.toFixed(2)} ms</div>
-                      </div>
-                      
-                      <div className="bg-white p-3 rounded shadow-sm col-span-2">
-                        <div className="text-sm text-gray-500">95th Percentile Latency</div>
-                        <div className="font-medium">{loadTestResults.p95_latency_ms.toFixed(2)} ms</div>
                       </div>
                     </div>
                     
