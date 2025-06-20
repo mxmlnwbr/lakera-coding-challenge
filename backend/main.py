@@ -137,7 +137,7 @@ async def load_test():
     print(f"Number of test sentences: {len(test_sentences)}")
     
     latencies = []
-    successful = num_requests  # All simulated requests succeed
+    successful = 0
     failed = 0
     
     print(f"Starting API latency test with {num_requests} requests...")
@@ -146,29 +146,32 @@ async def load_test():
     for i in range(num_requests):
         request_start = time.time()
 
-        # Use a different sentence for each request
-        await classify({"text": test_sentences[i]})
+        try:
+            # Use a different sentence for each request
+            await classify({"text": test_sentences[i]})
+        except Exception as e:
+            failed += 1
+            continue
         
         request_time = (time.time() - request_start) * 1000  # Convert to ms
         latencies.append(request_time)
+        successful += 1
     
     total_time = time.time() - start_time
     
     # Calculate basic stats
-    if latencies:
-        avg_latency = sum(latencies) / len(latencies)
-        min_latency = min(latencies)
-        max_latency = max(latencies)
-    else:
-        avg_latency = min_latency = max_latency = 0
+    avg_latency = sum(latencies) / len(latencies)
+    min_latency = min(latencies)
+    max_latency = max(latencies)
     
     result = {
         "total_requests": num_requests,
         "successful": successful,
         "failed": failed,
         "success_rate_percent": round((successful / num_requests) * 100, 1) if num_requests > 0 else 0,
+        "failed_rate_percent": round((failed / num_requests) * 100, 1) if num_requests > 0 else 0,
         "total_time_seconds": round(total_time, 2),
-        "requests_per_second": round(num_requests / total_time, 2) if total_time > 0 else 0,
+        "requests_per_second": round(successful / total_time, 2) if total_time > 0 else 0,
         "avg_latency_ms": round(avg_latency, 2),
         "min_latency_ms": round(min_latency, 2),
         "max_latency_ms": round(max_latency, 2),

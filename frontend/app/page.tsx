@@ -18,6 +18,7 @@ interface LoadTestResult {
   successful: number
   failed: number
   success_rate_percent: number
+  failed_rate_percent: number
   total_time_seconds: number
   requests_per_second: number
   avg_latency_ms: number
@@ -248,10 +249,20 @@ export default function Component() {
                         <div className="text-sm text-gray-500">Requests</div>
                         <div className="font-medium">{loadTestResults.total_requests}</div>
                       </div>
+
+                      <div className="bg-white p-3 rounded shadow-sm">
+                        <div className="text-sm text-gray-500">Total Time</div>
+                        <div className="font-medium">{loadTestResults.total_time_seconds.toFixed(2)} seconds</div>
+                      </div>
                       
                       <div className="bg-white p-3 rounded shadow-sm">
                         <div className="text-sm text-gray-500">Success Rate</div>
                         <div className="font-medium">{loadTestResults.success_rate_percent}%</div>
+                      </div>
+
+                      <div className="bg-white p-3 rounded shadow-sm">
+                        <div className="text-sm text-gray-500">Failed Rate</div>
+                        <div className="font-medium">{loadTestResults.failed_rate_percent}%</div>
                       </div>
                       
                       <div className="bg-white p-3 rounded shadow-sm">
