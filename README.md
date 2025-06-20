@@ -4,6 +4,11 @@ A web application for AI-powered content classification using FastAPI (backend) 
 
 ## Quick Start
 
+### Prerequisites
+
+- Python 3.13+ with [uv](https://github.com/astral-sh/uv) package manager
+- Node.js with [pnpm](https://pnpm.io/) package manager
+
 ### Option 1: Using the start.sh script (Recommended)
 
 ```bash
@@ -65,11 +70,6 @@ pnpm dev  # Start the development server
 | H2    | hate/threatening | Hateful content with threats of violence |
 | V2    | violence/graphic | Violent content with graphic detail |
 | OK    | OK | Not offensive content |
-
-## Prerequisites
-
-- Python 3.8+ with [uv](https://github.com/astral-sh/uv) package manager
-- Node.js with [pnpm](https://pnpm.io/) package manager
 
 ## General Information
 
