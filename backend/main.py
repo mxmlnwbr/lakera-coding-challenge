@@ -21,11 +21,6 @@ app.add_middleware(
 def root():
     return {"message": "Hello World"}
 
-@app.get("/ping")
-async def ping():
-    """Simple endpoint that returns immediately for latency testing"""
-    return {"ping": "pong", "timestamp": time.time()}
-
 # Add an endpoint for text classification
 @app.post("/classify")
 async def classify(text: dict):
